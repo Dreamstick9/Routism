@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Routism CLI wrapper — runs from any cwd; module discovery uses this repo.
+# Routism CLI — run from anywhere if this file is on your PATH.
+# Prefer:  ./install.sh   then just type:  routism
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export PYTHONPATH="${ROOT}${PYTHONPATH:+:$PYTHONPATH}"

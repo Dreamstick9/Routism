@@ -53,7 +53,7 @@ def run_doctor() -> int:
         missing = [t for t in tags if not _model_match(o.models, t)]
         if missing:
             warn(f"Missing engine models: {', '.join(missing)}")
-            info("Run: python3 -m routism_cli pull-engine")
+            info("Run:  routism pull-engine")
             warnings += 1
         else:
             ok(f"All engine tags present: {', '.join(tags)}")

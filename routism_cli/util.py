@@ -70,15 +70,19 @@ def is_linux() -> bool:
     return platform.system() == "Linux"
 
 
-def confirm(prompt: str, *, yes: bool = False) -> bool:
+def confirm(prompt: str, *, yes: bool = False, default: bool = False) -> bool:
+    """Ask y/n. ``yes=True`` skips prompt (CI). ``default`` is Enter with empty answer."""
     if yes:
         return True
     if not sys.stdin.isatty():
-        return False
+        return default
+    hint = "[Y/n]" if default else "[y/N]"
     try:
-        answer = input(f"{prompt} [y/N] ").strip().lower()
+        answer = input(f"  ? {prompt} {hint} ").strip().lower()
     except EOFError:
-        return False
+        return default
+    if not answer:
+        return default
     return answer in ("y", "yes")
 
 

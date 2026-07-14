@@ -17,37 +17,39 @@ Point Hermes, Cursor, Continue, or any OpenAI SDK at Routism. It runs a **Conduc
 
 ---
 
-## Recommended: CLI setup
+## One command: `routism`
 
-Engine brains (`eng-thinker`, `eng-verifier`, `eng-judge2`) run on **host Ollama**, not inside the Docker image. The setup CLI installs/checks Ollama, pulls those models, writes `.env`, and starts the stack:
+Engine brains run on **host Ollama** (not inside Docker). The CLI checks Docker + Ollama, downloads engine models if needed, writes `.env`, and starts **API + UI**. Questions are asked as setup runs.
 
 ```bash
 git clone <your-fork-or-url> Routism
 cd Routism
 
-# Prefer the module entrypoint (stdlib only; no pip install needed):
-python3 -m routism_cli setup
-
-# Or the wrapper:
-./bin/routism setup
+./install.sh          # once — installs `routism` on your PATH
+routism               # interactive full setup (default — no extra args)
 ```
 
-Useful flags: `--yes` (non-interactive), `--dry-run`, `--skip-pull`, `--skip-docker`.
+Bare `routism` **is** setup. You do **not** need `python3 -m routism_cli`.
 
-```bash
-python3 -m routism_cli doctor        # Docker + Ollama + engine models
-python3 -m routism_cli pull-engine   # ollama pull tags from routism_orch/orch.yaml
-python3 -m routism_cli start|stop|status|logs
-python3 -m routism_cli open          # http://localhost:3000
-```
+| Command | What it does |
+|---------|----------------|
+| `routism` | Interactive full setup |
+| `routism setup -y` | Non-interactive (scripts/CI) |
+| `routism doctor` | Health checks only |
+| `routism start` / `stop` | Start or stop API + UI |
+| `routism status` / `logs` | Containers |
+| `routism open` | Open http://localhost:3000 |
+| `routism pull-engine` | Download engine models only |
 
-Then open **http://localhost:3000** → **Providers** (worker pool) → **API keys**, and point your agent:
+Without install (from repo root): `./bin/routism`
+
+Then in the dashboard: **Providers** → connect workers → **API keys** → create a key:
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:8000/v1"
-export OPENAI_API_KEY="rtm_…"          # your key
+export OPENAI_API_KEY="rtm_…"
 # model: routism-ultra
-# Client timeout: 300–600 seconds (orchestration is multi-step)
+# Client timeout: 300–600 seconds
 ```
 
 ---
