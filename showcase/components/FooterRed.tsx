@@ -4,21 +4,31 @@ import {
   GITHUB_URL,
   SECTIONS,
 } from "@/lib/product-facts";
+import {
+  FOOTER_COL_LICENSE,
+  FOOTER_COL_NOTE,
+  FOOTER_COL_PRODUCT,
+  FOOTER_COL_SOURCE,
+  FOOTER_DISCLAIMER,
+  FOOTER_LEGAL_LINE,
+  FOOTER_LINK_API,
+  FOOTER_LINK_GITHUB,
+  FOOTER_LINK_MIT,
+  FOOTER_LINK_OPENAI,
+  FOOTER_WORDMARK,
+} from "@/lib/content";
 import SectionLink from "@/components/SectionLink";
-
-const FOOTER_DISCLAIMER =
-  "Showcase site only — product dashboard runs after you install locally. Not a multi-tenant SaaS; no OAuth or Stripe required.";
 
 export default function FooterRed() {
   return (
     <footer
-      className="bg-[var(--signal,#E31C23)] px-6 pb-10 pt-16 text-[var(--paper,#FFFFFF)] md:px-10 md:pt-20"
+      className="bg-signal px-6 pb-10 pt-16 text-paper md:px-10 md:pt-20"
       aria-label="Site footer"
     >
       <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 md:grid-cols-4">
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
-            Product
+            {FOOTER_COL_PRODUCT}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
             {SECTIONS.map((s) => (
@@ -36,7 +46,7 @@ export default function FooterRed() {
 
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
-            Source
+            {FOOTER_COL_SOURCE}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
             <li>
@@ -48,7 +58,7 @@ export default function FooterRed() {
                 data-github-url={GITHUB_URL}
                 data-cta="github-footer"
               >
-                GitHub
+                {FOOTER_LINK_GITHUB}
               </a>
             </li>
             <li>
@@ -58,7 +68,7 @@ export default function FooterRed() {
                 rel="noopener noreferrer"
                 className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                API docs
+                {FOOTER_LINK_API}
               </a>
             </li>
             <li>
@@ -68,7 +78,7 @@ export default function FooterRed() {
                 rel="noopener noreferrer"
                 className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                OpenAI compat
+                {FOOTER_LINK_OPENAI}
               </a>
             </li>
           </ul>
@@ -76,7 +86,7 @@ export default function FooterRed() {
 
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
-            License
+            {FOOTER_COL_LICENSE}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
             <li>
@@ -86,7 +96,7 @@ export default function FooterRed() {
                 rel="noopener noreferrer"
                 className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                MIT
+                {FOOTER_LINK_MIT}
               </a>
             </li>
           </ul>
@@ -94,7 +104,7 @@ export default function FooterRed() {
 
         <div>
           <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
-            Note
+            {FOOTER_COL_NOTE}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/80">
             {FOOTER_DISCLAIMER}
@@ -104,15 +114,13 @@ export default function FooterRed() {
 
       <div className="mx-auto mt-16 max-w-6xl overflow-hidden border-t border-white/20 pt-8">
         <p
-          className="select-none font-bold leading-[0.85] tracking-[-0.06em] text-[var(--charcoal,#1A1A1A)]"
+          className="select-none font-bold leading-[0.85] tracking-[-0.06em] text-charcoal"
           style={{ fontSize: "clamp(4rem, 18vw, 12rem)" }}
           aria-hidden
         >
-          ROUTISM
+          {FOOTER_WORDMARK}
         </p>
-        <p className="mt-4 text-xs text-white/60">
-          MIT licensed · self-hosted · not a multi-tenant SaaS
-        </p>
+        <p className="mt-4 text-xs text-white/60">{FOOTER_LEGAL_LINE}</p>
       </div>
     </footer>
   );
