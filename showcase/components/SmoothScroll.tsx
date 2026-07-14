@@ -52,6 +52,8 @@ export default function SmoothScroll({
         lenis.scrollTo(el, {
           offset: opts?.offset ?? -72,
           immediate: opts?.immediate ?? false,
+          // Allow programmatic nav while stop()'d (e.g. mobile menu open)
+          force: opts?.force ?? false,
         });
       },
       onScroll: (cb) => {

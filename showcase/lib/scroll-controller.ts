@@ -8,7 +8,7 @@ import { sectionHref } from "./product-facts";
 export type Scroller = {
   scrollTo: (
     target: string | Element,
-    opts?: { offset?: number; immediate?: boolean },
+    opts?: { offset?: number; immediate?: boolean; force?: boolean },
   ) => void;
   onScroll: (cb: (y: number) => void) => () => void;
   refresh: () => void;
@@ -74,7 +74,8 @@ export function scrollToSection(id: string, offset = DEFAULT_NAV_OFFSET): void {
 
   const s = getScroller();
   if (s) {
-    s.scrollTo(el, { offset, immediate: false });
+    // force: true so scroll works even when Lenis is stop()'d (mobile sheet lock)
+    s.scrollTo(el, { offset, immediate: false, force: true });
   } else if (typeof window !== "undefined") {
     // Match Lenis offset so fixed chrome does not cover headings
     const top = el.getBoundingClientRect().top + window.scrollY + offset;

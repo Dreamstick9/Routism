@@ -50,6 +50,11 @@ export default function Nav() {
   }, []);
 
   function go(id: string) {
+    // Sheet open stops Lenis; resume before/alongside programmatic scroll so
+    // navigation is not a no-op (scrollToSection also passes force: true).
+    if (open) {
+      getScroller()?.start();
+    }
     scrollToSection(id);
     track("nav_section", { id });
     // Restore focus to menu button only when the sheet was open
