@@ -14,6 +14,7 @@ Point Hermes, Cursor, Continue, or any OpenAI SDK at Routism. It runs a **Conduc
 | Chat API | `POST /v1/chat/completions` |
 | Models list | `GET /v1/models` |
 | Docs | [docs/API.md](docs/API.md) · [docs/OPENAI_COMPAT.md](docs/OPENAI_COMPAT.md) |
+| Showcase site | [showcase/](showcase/) — marketing page (`npm run dev` → http://localhost:3100) |
 
 ---
 
