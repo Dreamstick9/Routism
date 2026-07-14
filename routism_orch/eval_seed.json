@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "description": "North-star eval seed: multi-step tasks for Routism(pool) vs single-worker baselines. Scoring uses simple keyword/contains checks (objective subset).",
+  "tasks": [
+    {
+      "id": "fizzbuzz-test-explain",
+      "category": "code+test+explain",
+      "query": "Implement fizzbuzz in Python then write unit tests for it then briefly explain the approach for a beginner",
+      "objective_keywords": ["def", "fizz", "buzz", "test", "assert"],
+      "expect_contains": ["def", "fizz"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["fizzbuzz", "unit test", "explain", "beginner"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "palindrome-pytest-teach",
+      "category": "code+test+explain",
+      "query": "Write a Python function is_palindrome(s) then add 4 pytest cases then explain how it works in simple language",
+      "objective_keywords": ["def", "palindrome", "pytest", "assert"],
+      "expect_contains": ["def", "palindrome"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["palindrome", "pytest", "explain", "simple"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "signup-api-design-impl-security",
+      "category": "api-design",
+      "query": "Design a REST signup API then implement the handler in Python then write three security notes for product managers",
+      "objective_keywords": ["POST", "signup", "password", "token", "security"],
+      "expect_contains": ["signup", "POST"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["design", "implement", "security", "signup"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "binary-search-complexity",
+      "category": "code+reason",
+      "query": "Implement binary search in Python then analyze its time and space complexity then explain when to prefer it over linear search",
+      "objective_keywords": ["def", "binary", "O(log", "complexity"],
+      "expect_contains": ["def", "binary"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["binary search", "complexity", "explain", "linear"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "sql-schema-query-explain",
+      "category": "data",
+      "query": "Design a users/orders schema then write a SQL query for top customers by revenue then explain the query plan for a beginner",
+      "objective_keywords": ["CREATE", "SELECT", "JOIN", "users", "orders"],
+      "expect_contains": ["SELECT", "users"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["schema", "SQL", "explain", "revenue"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "rate-limiter-design-code-tests",
+      "category": "api-design",
+      "query": "Design a token-bucket rate limiter then implement it in Python then write unit tests covering burst and steady traffic",
+      "objective_keywords": ["token", "bucket", "rate", "def", "test"],
+      "expect_contains": ["token", "def"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["rate limiter", "implement", "unit test", "token"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "distance-math-then-explain",
+      "category": "math+explain",
+      "query": "A train goes 60km/h for 2 hours then 90km/h for 1 hour. Calculate the total distance then explain the reasoning step by step for a 10-year-old",
+      "objective_keywords": ["210", "60", "90", "distance"],
+      "expect_contains": ["210"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["distance", "calculate", "explain", "10-year"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "cache-lru-impl-explain",
+      "category": "code+test+explain",
+      "query": "Implement an LRU cache class in Python then write tests for get/put eviction then explain the approach for a beginner",
+      "objective_keywords": ["class", "LRU", "get", "put", "OrderedDict"],
+      "expect_contains": ["class", "get", "put"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["LRU", "test", "explain", "cache"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "microservices-parallel-compare",
+      "category": "reasoning-parallel",
+      "query": "Summarize three risks of microservices then separately list three benefits of monoliths then compare when each architecture wins",
+      "objective_keywords": ["risk", "benefit", "microservice", "monolith"],
+      "expect_contains": ["microservice", "monolith"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["risk", "benefit", "monolith", "microservice", "compare"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "auth-jwt-design-impl-notes",
+      "category": "api-design",
+      "query": "Design JWT-based auth for a REST API then implement a Python middleware sketch then write security notes for PMs about refresh tokens",
+      "objective_keywords": ["JWT", "Bearer", "refresh", "token", "auth"],
+      "expect_contains": ["JWT", "token"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["JWT", "implement", "security", "refresh"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "regex-email-validate-test-teach",
+      "category": "code+test+explain",
+      "query": "Write a Python function to validate email addresses with regex then add unit tests for valid and invalid cases then explain the pattern simply",
+      "objective_keywords": ["def", "regex", "email", "test", "re."],
+      "expect_contains": ["def", "email"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["email", "regex", "unit test", "explain"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "etl-pipeline-design-code-explain",
+      "category": "data",
+      "query": "Design a simple ETL pipeline for CSV to SQLite then implement the extract and load steps in Python then explain failure modes and retries for operators",
+      "objective_keywords": ["CSV", "SQLite", "extract", "load", "retry"],
+      "expect_contains": ["CSV", "SQLite"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["ETL", "implement", "explain", "CSV", "SQLite"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "merge-sort-impl-complexity-teach",
+      "category": "code+reason",
+      "query": "Implement merge sort in Python then derive its time and space complexity then explain the divide-and-conquer idea for a beginner",
+      "objective_keywords": ["def", "merge", "sort", "O(n log", "complexity"],
+      "expect_contains": ["def", "merge"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["merge sort", "complexity", "explain", "divide"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "todo-api-design-crud-security",
+      "category": "api-design",
+      "query": "Design a REST todo list API then implement create/list/complete handlers in Python FastAPI style then list security and validation rules for each endpoint",
+      "objective_keywords": ["POST", "GET", "todo", "complete", "validation"],
+      "expect_contains": ["todo", "POST"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["design", "implement", "security", "todo"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "compound-interest-math-explain",
+      "category": "math+explain",
+      "query": "Calculate compound interest on $1000 at 5% annual rate for 3 years compounded yearly then show the formula and explain each variable for a high-school student",
+      "objective_keywords": ["1157", "1000", "5%", "compound", "formula"],
+      "expect_contains": ["1157"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["compound", "calculate", "explain", "formula"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "graph-bfs-impl-test-explain",
+      "category": "code+test+explain",
+      "query": "Implement BFS on an adjacency list in Python then write unit tests for connected and disconnected graphs then explain why BFS finds shortest unweighted paths",
+      "objective_keywords": ["def", "BFS", "queue", "test", "shortest"],
+      "expect_contains": ["def", "BFS"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["BFS", "unit test", "explain", "shortest"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "pubsub-vs-queue-compare",
+      "category": "reasoning-parallel",
+      "query": "List three strengths of pub/sub messaging then separately list three strengths of work queues then compare which fits fan-out notification vs job processing",
+      "objective_keywords": ["pub/sub", "queue", "fan-out", "notification", "job"],
+      "expect_contains": ["pub", "queue"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["pub", "queue", "compare", "notification"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "csv-stats-pipeline-code-explain",
+      "category": "data",
+      "query": "Design a small data pipeline that reads a CSV of sales then implement mean and median aggregation in Python then explain how to handle missing values for analysts",
+      "objective_keywords": ["CSV", "mean", "median", "missing", "def"],
+      "expect_contains": ["CSV", "mean"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["CSV", "implement", "explain", "missing"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "retry-backoff-design-code-tests",
+      "category": "api-design",
+      "query": "Design exponential backoff with jitter for HTTP retries then implement it in Python then write unit tests that mock failing then succeeding responses",
+      "objective_keywords": ["backoff", "jitter", "retry", "def", "test"],
+      "expect_contains": ["backoff", "def"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["backoff", "implement", "unit test", "retry"],
+        "expect_dependency_chain": true
+      }
+    },
+    {
+      "id": "two-sum-hash-complexity-teach",
+      "category": "code+reason",
+      "query": "Implement the two-sum problem with a hash map in Python then analyze time and space complexity then explain why the hash map approach beats nested loops",
+      "objective_keywords": ["def", "two", "sum", "hash", "O(n)"],
+      "expect_contains": ["def", "sum"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 2,
+        "prompt_contains_any": ["two-sum", "hash", "complexity", "explain"],
+        "expect_dependency_chain": true
+      }
+    }
+  ]
+}

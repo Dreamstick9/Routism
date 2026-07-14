@@ -1,0 +1,93 @@
+# Routism Orchestration Engine — OWN model registry (separate from the app pool).
+#
+# Models listed here are ENGINE-INTERNAL ONLY (Phase 6: the parallel-orchestration
+# engine's thinker/verifier/judge2 brains). They are NEVER offered as user-selectable
+# app workers. The `reserved: true` flag is the contract the UI (OpenCode) uses to
+# filter them out of every user-facing list, and the server rejects any attempt to
+# add one as an app worker.
+#
+# ENGINE = 100% HIDDEN BACKEND. The user NEVER sees, touches, or chooses these
+# models. The UI must ONLY ask the user to CONNECT PROVIDERS (Ollama/Groq/Gemini).
+#
+# ENGINE ≠ WORKERS (user's standing rule). The user's worker pool (gemma3:1b,
+# qwen2.5:0.5b, tinyllama, Groq, Gemini, ...) is the BLACK-BOX pool the
+# engine fans out to. Configured separately in routism.yaml, never appears here.
+#
+# These 3 models were RESEARCHED (not lazily reused from the user's personal
+# Ollama pool) for best-fit per role, verified pullable on Apple-Silicon Ollama,
+# and HARDCODED here. Tags are exact `ollama pull` tags (no -instruct/-it suffix).
+#
+# thinking: true  -> enable native thinking mode (Qwen3 `/think`; DeepSeek-R1
+#                   reasons by default). Ollama returns reasoning in a `reasoning`
+#                   field ( block); engine_client captures it as
+#                   `.thinking`. arXiv:2509.13332: thinking adds ~+10pt judge
+#                   accuracy at a fraction of few-shot cost.
+models:
+  # THREE engine LLMs only. Workers NEVER used as engine.
+  # Thinker + verifier both on qwen2.5:7b (already pulled). ENGINE_SERIALIZE=1.
+  - id: eng-thinker
+    role: coordinator        # P5 server wiring reads role=coordinator here
+    provider: ollama
+    model: qwen2.5:7b        # 7B planner (was 1.7B — too weak for Conductor quality)
+    reserved: true
+    thinking: false          # instruct: emit JSON / work orders directly
+    note: "Engine planner+merge: structure DAG, expand work orders, sectioned synthesize."
+
+  - id: eng-verifier
+    role: verifier
+    provider: ollama
+    model: qwen2.5:7b
+    reserved: true
+    thinking: false          # non-thinking instruct model: emits JSON verdict directly
+                              # (~3-5s). DISCRIMINATES (qwen2.5:0.5b was too weak;
+                              # qwen3:4b timed out thinking). 7B gives real judge quality.
+    note: "Engine verifier: scores candidate answers 0-10 for correctness/consistency/hallucination."
+
+  - id: eng-judge2
+    role: judge2
+    provider: ollama
+    model: deepseek-r1:1.5b
+    reserved: true
+    thinking: true           # DeepSeek-R1 distill: reasoning-by-default, distinct family
+    note: "Engine cross-check judge: pairwise A/B over top-2 to break ties / catch bias."
+
+# Capability Registry — engine-owned mapping of capability tags to descriptions.
+# Used by the Conductor planner to match subtask tags to worker capabilities.
+# Keep this in sync with routism.yaml worker tags.
+capability_registry:
+  code:
+    description: "Code generation, debugging, refactoring, algorithms"
+    example_subtasks: ["Write a Python function", "Debug a bug", "Implement an algorithm"]
+  reasoning:
+    description: "Logical reasoning, problem solving, step-by-step deduction"
+    example_subtasks: ["Solve a logic puzzle", "Reason through a math word problem"]
+  math:
+    description: "Mathematical computation, formulas, proofs"
+    example_subtasks: ["Calculate prime numbers", "Solve an equation", "Prove a theorem"]
+  concise:
+    description: "Short, direct answers without fluff"
+    example_subtasks: ["One-sentence answer", "Yes/No with brief reason"]
+  creative:
+    description: "Creative writing, storytelling, brainstorming"
+    example_subtasks: ["Write a short story", "Brainstorm names", "Write a poem"]
+  summarize:
+    description: "Summarization, extraction, compression"
+    example_subtasks: ["Summarize this article", "Extract key points", "TL;DR"]
+  explain:
+    description: "Educational explanation, teaching, conceptual clarity"
+    example_subtasks: ["Explain how X works", "Teach a concept", "Why does Y happen?"]
+  fast:
+    description: "Ultra-low latency, simple chat, low resource"
+    example_subtasks: ["Quick reply", "Simple chat", "Low-latency response"]
+  chat:
+    description: "General conversation, Q&A, friendly assistant"
+    example_subtasks: ["Chat", "Answer a question", "Friendly help"]
+  reasoning:
+    description: "Complex reasoning, multi-step logic, deduction"
+    example_subtasks: ["Multi-step reasoning", "Chain of thought", "Complex deduction"]
+  large_context:
+    description: "Handles very long inputs, document analysis"
+    example_subtasks: ["Analyze a 100-page document", "Long context Q&A"]
+  multimodal:
+    description: "Image, audio, video understanding"
+    example_subtasks: ["Describe an image", "Transcribe audio"]

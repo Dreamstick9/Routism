@@ -1,0 +1,58 @@
+# Secrets & local config (never commit)
+.env
+.env.*
+!.env.example
+routism.yaml
+*.pem
+*.key
+id_rsa*
+*.p12
+bootstrap_key.txt
+
+# Runtime data (keep empty placeholder so clone has the dir)
+/data/**
+!/data/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / UI
+ui/node_modules/
+ui/.next/
+ui/out/
+ui/tsconfig.tsbuildinfo
+
+# OS / IDE / personal tooling (not product)
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.agents/
+.claude/
+.commandcode/
+.opencode/
+.pytest_cache/
+$SCRATCH/
+
+# Local research / dumps (not public product)
+archive/
+routism_legacy/
+eval_results/
+phase2_results.json
+_p5b_hcache.json
+ARCHITECTURE.md
+ARCHITECTURE_*.md
+
+# Logs / temp
+*.log
+/tmp/

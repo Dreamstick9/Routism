@@ -1,0 +1,21 @@
+# Routism pool config — EXAMPLE: 1 local + 1 cloud worker.
+# Copy to routism.yaml and set your real API key env var to use the cloud worker.
+# The architecture supports ANY provider (cloud OR local, any API) in the 1-5 pool.
+orchestrator_worker_id: local_qwen   # the orchestrator LLM; reuse a worker
+
+workers:
+  - id: local_qwen
+    provider: ollama
+    base_url: http://localhost:11434/v1
+    model: qwen2.5:0.5b            # any local Ollama/MLX/vLLM model you have pulled
+    tags: [local, fast]
+    api_key_env: null
+
+  - id: cloud_gpt
+    provider: openai
+    base_url: https://api.openai.com/v1
+    model: gpt-4o-mini
+    tags: [cloud, strong]
+    api_key_env: OPENAI_API_KEY    # export OPENAI_API_KEY=sk-... before running
+
+  # you can add up to 5 workers total, e.g. Anthropic, Google, Fireworks, etc.

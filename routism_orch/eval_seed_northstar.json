@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "description": "NORTHSTAR hard seeds: multi-step deliverables where sectioned team merge should beat any single solo dump.",
+  "tasks": [
+    {
+      "id": "ns_api_pipeline",
+      "category": "api-design",
+      "query": "Design a REST signup API with email and password, implement a Python FastAPI handler that validates email and hashes passwords with bcrypt returning user_id and status created, write three unit tests for valid signup invalid email and missing password, and write three security notes for product managers with one mitigation each.",
+      "objective_keywords": ["POST", "signup", "email", "password", "bcrypt", "def", "test", "assert", "rate", "security", "mitigation"],
+      "expect_contains": ["signup", "password"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "design", "implement", "test", "security"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_rate_limit",
+      "category": "systems",
+      "query": "Compare token-bucket vs sliding-window rate limiting, recommend one for a public API, sketch a Python implementation of the recommendation, and list four failure modes with mitigations.",
+      "objective_keywords": ["token", "bucket", "sliding", "rate", "def", "failure", "mitigation", "API"],
+      "expect_contains": ["rate"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "compare", "implement", "failure"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_code_explain",
+      "category": "code+test+explain",
+      "query": "Implement a pure Python function that merges two sorted lists into one sorted list without using heapq, write unit tests covering empty inputs and duplicates, and explain the approach for a beginner in short bullets.",
+      "objective_keywords": ["def", "merge", "sorted", "test", "assert", "beginner", "O("],
+      "expect_contains": ["def"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "implement", "test", "explain"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_research_chain",
+      "category": "research",
+      "query": "Summarize three market risks of multi-cloud adoption then propose two mitigation strategies then draft a one-paragraph recommendation for a board that prefers cost control.",
+      "objective_keywords": ["risk", "multi-cloud", "mitigation", "cost", "board", "recommend"],
+      "expect_contains": ["risk"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "risk", "mitigation", "recommend"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_parallel_indep",
+      "category": "parallel",
+      "query": "List three benefits of a modular monolith architecture. Separately, list three risks of premature microservices adoption. Keep the two analyses independent.",
+      "objective_keywords": ["modular", "monolith", "benefit", "microservice", "risk"],
+      "expect_contains": ["monolith"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "benefit", "risk"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_binary_search",
+      "category": "code+reason",
+      "query": "Implement binary search in Python with clear comments, analyze time and space complexity, and explain when to prefer it over linear search for a junior engineer.",
+      "objective_keywords": ["def", "binary", "search", "O(log", "linear", "complexity"],
+      "expect_contains": ["def", "binary"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "binary", "complexity", "explain"],
+        "expect_dependency_chain": false
+      }
+    },
+    {
+      "id": "ns_sql_pipeline",
+      "category": "data",
+      "query": "Design a simple users and orders relational schema, write a SQL query for top customers by revenue, and explain the query for a beginner product manager.",
+      "objective_keywords": ["CREATE", "SELECT", "users", "orders", "revenue", "JOIN", "explain"],
+      "expect_contains": ["SELECT"],
+      "plan_expect": {
+        "min_subtasks": 2,
+        "min_layers": 1,
+        "prompt_contains_any": ["Work order", "schema", "SQL", "explain"],
+        "expect_dependency_chain": false
+      }
+    }
+  ]
+}

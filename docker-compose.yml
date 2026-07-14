@@ -1,0 +1,59 @@
+# Routism — full stack (API + UI) with one command:
+#
+#   docker compose up --build
+#
+# Then open:
+#   Dashboard  http://localhost:3000
+#   API        http://localhost:8000
+
+services:
+  api:
+    build: .
+    image: routism-api:local
+    ports:
+      - "8000:8000"
+    environment:
+      ROUTISM_HOST: "0.0.0.0"
+      ROUTISM_DATA_DIR: /data
+      ROUTISM_OPEN_LOCAL: "1"
+      ROUTISM_ALLOW_ANON_LOOPBACK: "1"
+      ROUTISM_REQUIRE_API_KEY: "0"
+      ROUTISM_PUBLIC_BASE_URL: "http://localhost:8000/v1"
+      # Engine models (eng-thinker / eng-verifier / eng-judge2) run on host Ollama
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    extra_hosts:
+      # Linux: map host.docker.internal → host gateway (Docker Desktop already provides this)
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - routism-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/v1/models')",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+      args:
+        # Baked into the JS bundle so the browser can reach the API on the host
+        NEXT_PUBLIC_ROUTISM_API: "http://localhost:8000"
+    image: routism-ui:local
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  routism-data:
