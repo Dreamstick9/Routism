@@ -22,7 +22,7 @@ Point Hermes, Cursor, Continue, or any OpenAI SDK at Routism. It runs a **Conduc
 Engine brains run on **host Ollama** (not inside Docker). The CLI checks Docker + Ollama, downloads engine models if needed, writes `.env`, and starts **API + UI**. Questions are asked as setup runs.
 
 ```bash
-git clone <your-fork-or-url> Routism
+git clone https://github.com/Dreamstick9/Routism.git Routism
 cd Routism
 
 ./install.sh          # once — installs `routism` on your PATH
