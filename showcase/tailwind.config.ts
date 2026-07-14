@@ -20,10 +20,12 @@ export default {
         paper: "var(--paper)",
         fog: "var(--fog)",
         "fog-dim": "var(--fog-dim)",
-        lime: "var(--accent-lime)",
+        /* Prefer accent-* in new code; lime is a short alias for accent-lime */
+        "accent-lime": "var(--accent-lime)",
         "accent-green": "var(--accent-green)",
         "accent-pink": "var(--accent-pink)",
         "accent-blue": "var(--accent-blue)",
+        lime: "var(--accent-lime)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],

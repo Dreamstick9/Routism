@@ -77,10 +77,21 @@ body {
   background: var(--selection-bg);
 }
 
-/* Keyboard focus — default ring for dark/void/signal contexts */
+/* Keyboard focus — white ring on void/signal; dark ring on cream/paper fields */
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+/* Scope on cream/paper sections (PR-2+ chapters): set class on section root */
+.field-cream,
+.field-paper {
+  --focus-ring: var(--focus-ring-on-light);
+}
+
+.field-cream :focus-visible,
+.field-paper :focus-visible {
+  outline-color: var(--focus-ring-on-light);
 }
 
 /* Optional editorial grain (not on body by default). Opacity ≤ 0.04; red-field use. */
@@ -159,7 +170,8 @@ body {
 
 .cta-primary:hover {
   transform: translateY(-2px);
-  background: var(--ink);
+  background: var(--signal-hot);
+  color: var(--paper);
 }
 
 .cta-secondary {
@@ -171,7 +183,8 @@ body {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--fog);
-  font-weight: 600;
+  /* 700 matches loaded Inter faces (no 600 face under ≤4-weight budget) */
+  font-weight: 700;
   font-size: 0.95rem;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
