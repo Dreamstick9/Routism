@@ -238,7 +238,7 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Screen-reader only (skip link) */
+/* Screen-reader only (skip link helpers) */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -260,6 +260,48 @@ body {
   overflow: visible;
   clip: auto;
   white-space: normal;
+}
+
+/*
+ * Skip link — always high contrast on signal red and void.
+ * Paper fill + ink type (WCAG AA) with white ring so the control reads on --signal.
+ */
+.skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+  z-index: 60;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.625rem 1.125rem;
+  overflow: visible;
+  clip: auto;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 2px var(--charcoal),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .card-proof {

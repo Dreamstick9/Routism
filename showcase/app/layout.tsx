@@ -10,11 +10,15 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+/* Production domain is set via NEXT_PUBLIC_SHOWCASE_URL when known — do not invent one. */
+const showcaseUrl =
+  process.env.NEXT_PUBLIC_SHOWCASE_URL || "http://localhost:3100";
+
 export const metadata: Metadata = {
   title: "Routism — Multi-model orchestration for coding agents",
   description:
     "Self-hosted, OpenAI-compatible multi-model orchestration. Conduct many models. One API. MIT.",
-  metadataBase: new URL("https://github.com/Dreamstick9/Routism"),
+  metadataBase: new URL(showcaseUrl),
   openGraph: {
     title: "Routism",
     description:

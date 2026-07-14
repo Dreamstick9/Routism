@@ -27,7 +27,7 @@ export default function FooterRed() {
     >
       <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 md:grid-cols-4">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
+          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/90">
             {FOOTER_COL_PRODUCT}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
@@ -35,7 +35,7 @@ export default function FooterRed() {
               <li key={s.id}>
                 <SectionLink
                   id={s.id}
-                  className="rounded-sm text-white/90 transition-opacity hover:opacity-100 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="rounded-sm text-paper transition-opacity hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {s.label}
                 </SectionLink>
@@ -45,7 +45,7 @@ export default function FooterRed() {
         </div>
 
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
+          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/90">
             {FOOTER_COL_SOURCE}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
@@ -54,7 +54,7 @@ export default function FooterRed() {
                 href={GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="rounded-sm text-paper hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 data-github-url={GITHUB_URL}
                 data-cta="github-footer"
               >
@@ -66,7 +66,7 @@ export default function FooterRed() {
                 href={GITHUB_DOCS_API}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="rounded-sm text-paper hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {FOOTER_LINK_API}
               </a>
@@ -76,7 +76,7 @@ export default function FooterRed() {
                 href={GITHUB_DOCS_OPENAI}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="rounded-sm text-paper hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {FOOTER_LINK_OPENAI}
               </a>
@@ -85,7 +85,7 @@ export default function FooterRed() {
         </div>
 
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
+          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/90">
             {FOOTER_COL_LICENSE}
           </p>
           <ul className="mt-4 flex flex-col gap-2 text-sm">
@@ -94,7 +94,7 @@ export default function FooterRed() {
                 href={`${GITHUB_URL}/blob/main/LICENSE`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-sm text-white/90 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="rounded-sm text-paper hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {FOOTER_LINK_MIT}
               </a>
@@ -103,10 +103,10 @@ export default function FooterRed() {
         </div>
 
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/70">
+          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-white/90">
             {FOOTER_COL_NOTE}
           </p>
-          <p className="mt-4 text-sm leading-relaxed text-white/80">
+          <p className="mt-4 text-sm leading-relaxed text-paper/95">
             {FOOTER_DISCLAIMER}
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function FooterRed() {
         >
           {FOOTER_WORDMARK}
         </p>
-        <p className="mt-4 text-xs text-white/60">{FOOTER_LEGAL_LINE}</p>
+        <p className="mt-4 text-xs text-white/85">{FOOTER_LEGAL_LINE}</p>
       </div>
     </footer>
   );

@@ -201,7 +201,7 @@ export default function Nav() {
             href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center justify-center rounded-full bg-[var(--charcoal,#1A1A1A)] px-4 py-2 text-xs font-semibold text-[var(--paper,#FFFFFF)] shadow-sm transition-opacity hover:opacity-90 md:text-sm ${pillFocus}`}
+            className={`inline-flex items-center justify-center rounded-full border border-white/25 bg-[var(--charcoal,#1A1A1A)] px-4 py-2 text-xs font-semibold text-[var(--paper,#FFFFFF)] shadow-sm transition-opacity hover:opacity-90 md:text-sm ${pillFocus}`}
             data-cta="github-nav"
             data-github-url={GITHUB_URL}
             onClick={() => track("cta_github", { where: "nav" })}

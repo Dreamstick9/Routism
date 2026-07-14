@@ -12,11 +12,12 @@ export default function SectionLabel({
   className = "",
   tone = "on-dark",
 }: SectionLabelProps) {
+  /* Prefer ≥4.5:1 on cream/signal for 11px tracked labels (WCAG AA). */
   const toneClass =
     tone === "on-light"
-      ? "text-ink/55"
+      ? "text-ink/70"
       : tone === "on-signal"
-        ? "text-white/70"
+        ? "text-white/90"
         : "text-fog-dim";
 
   return (

@@ -64,7 +64,7 @@ export default function HeroWorld() {
         />
         <p
           data-reveal
-          className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85 md:text-lg"
+          className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-paper/95 md:text-lg"
         >
           {PRODUCT_ONE_LINER}
         </p>
@@ -76,7 +76,7 @@ export default function HeroWorld() {
             href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full bg-charcoal px-6 py-3 text-sm font-bold text-paper transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex items-center justify-center rounded-full border border-white/25 bg-charcoal px-6 py-3 text-sm font-bold text-paper transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             data-cta="github-hero"
             data-github-url={GITHUB_URL}
             onClick={() => track("cta_github", { where: "hero" })}
@@ -92,7 +92,7 @@ export default function HeroWorld() {
         </div>
         <p
           data-reveal
-          className="mono mt-8 text-[10px] text-white/60 md:text-xs"
+          className="mono mt-8 text-[10px] text-white/85 md:text-xs"
         >
           {heroMetaLine(INSTALL_COMMAND, MODEL_ID)}
         </p>
