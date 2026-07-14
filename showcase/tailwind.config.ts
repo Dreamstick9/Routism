@@ -9,8 +9,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        void: "var(--void)",
+        charcoal: "var(--charcoal)",
+        "charcoal-soft": "var(--charcoal-soft)",
+        signal: "var(--signal)",
+        "signal-hot": "var(--signal-hot)",
+        cream: "var(--cream)",
+        "cream-deep": "var(--cream-deep)",
+        ink: "var(--ink)",
+        paper: "var(--paper)",
+        fog: "var(--fog)",
+        "fog-dim": "var(--fog-dim)",
+        lime: "var(--accent-lime)",
+        "accent-green": "var(--accent-green)",
+        "accent-pink": "var(--accent-pink)",
+        "accent-blue": "var(--accent-blue)",
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SF Mono", "Menlo", "monospace"],
       },
     },
   },

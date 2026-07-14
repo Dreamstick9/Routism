@@ -2,16 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -------------------------------------------------------------------------- */
+/* Neue Montreal editorial tokens (source of truth)                           */
+/* -------------------------------------------------------------------------- */
 :root {
-  --void: #05060a;
-  --void-elevated: #0c0e14;
-  --filament: #2de2e6;
-  --pulse: #ff2a6d;
-  --acid: #c8f542;
+  /* Core fields */
+  --void: #000000;
+  --charcoal: #1a1a1a;
+  --charcoal-soft: #0a0a0a;
+  --signal: #e31c23;
+  --signal-hot: #ff4000;
+  --cream: #f5f0e8;
+  --cream-deep: #f2ede4;
+  --ink: #1a1a1a;
+  --paper: #ffffff;
   --fog: rgba(255, 255, 255, 0.72);
-  --fog-dim: rgba(255, 255, 255, 0.45);
-  --border-glow: rgba(45, 226, 230, 0.25);
-  --font-display: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --fog-dim: rgba(255, 255, 255, 0.55);
+
+  /* Flat graphic accents (sparing; no neon glow) */
+  --accent-lime: #c8ff00;
+  --accent-green: #22c55e;
+  --accent-pink: #ff4d9a;
+  --accent-blue: #3b82f6;
+
+  /* Rules */
+  --rule-on-cream: rgba(0, 0, 0, 0.12);
+  --rule-on-signal: rgba(255, 255, 255, 0.18);
+
+  /* Selection */
+  --selection-fg: #1a1a1a;
+  --selection-bg: #ff4000;
+
+  /* Focus rings: light on dark fields, dark on cream/paper */
+  --focus-ring: #ffffff;
+  --focus-ring-on-light: #1a1a1a;
+
+  /* -------------------------------------------------------------------------- */
+  /* Legacy aliases — keep existing page.tsx / components usable (PR-1 safety)  */
+  /* -------------------------------------------------------------------------- */
+  --void-elevated: var(--charcoal-soft);
+  /* Accent on dark surfaces; not cyan. Prefer paper/signal-hot over glow. */
+  --filament: var(--signal-hot);
+  --pulse: var(--signal-hot);
+  --acid: var(--accent-lime);
+  --border-glow: rgba(255, 255, 255, 0.12);
+
+  --font-display: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
@@ -30,20 +66,31 @@ html.lenis body {
 
 body {
   background: var(--void);
-  color: #f2f4f8;
+  color: var(--fog);
   font-family: var(--font-display);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Film grain overlay */
-.grain::after {
+::selection {
+  color: var(--selection-fg);
+  background: var(--selection-bg);
+}
+
+/* Keyboard focus — default ring for dark/void/signal contexts */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Optional editorial grain (not on body by default). Opacity ≤ 0.04; red-field use. */
+.grain-editorial::after {
   content: "";
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 50;
-  opacity: 0.06;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
@@ -52,7 +99,7 @@ body {
   html {
     scroll-behavior: auto;
   }
-  .grain::after {
+  .grain-editorial::after {
     display: none;
   }
   .motion-safe-only {
@@ -79,19 +126,20 @@ body {
   line-height: 0.95;
 }
 
+/* Legacy utility classes — rewritten without neon glow / glassmorphism */
 .filament-text {
-  color: var(--filament);
-  text-shadow: 0 0 40px rgba(45, 226, 230, 0.35);
+  color: var(--signal-hot);
+  /* no text-shadow glow */
 }
 
 .pulse-text {
-  color: var(--pulse);
+  color: var(--signal-hot);
 }
 
 .glass {
-  background: rgba(12, 14, 20, 0.72);
-  border: 1px solid var(--border-glow);
-  backdrop-filter: blur(16px);
+  background: var(--charcoal-soft);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: none;
 }
 
 .cta-primary {
@@ -101,17 +149,17 @@ body {
   gap: 0.5rem;
   padding: 0.9rem 1.6rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--filament), #1a9ea3);
-  color: #041016;
+  background: var(--charcoal);
+  color: var(--paper);
   font-weight: 700;
   font-size: 0.95rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 0 32px rgba(45, 226, 230, 0.35);
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: none;
 }
 
 .cta-primary:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 48px rgba(45, 226, 230, 0.5);
+  transform: translateY(-2px);
+  background: var(--ink);
 }
 
 .cta-secondary {
@@ -121,7 +169,7 @@ body {
   gap: 0.5rem;
   padding: 0.9rem 1.6rem;
   border-radius: 999px;
-  border: 1px solid var(--border-glow);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--fog);
   font-weight: 600;
   font-size: 0.95rem;
@@ -129,9 +177,9 @@ body {
 }
 
 .cta-secondary:hover {
-  border-color: var(--filament);
-  color: #fff;
-  background: rgba(45, 226, 230, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .mono {
@@ -165,13 +213,13 @@ body {
 .card-proof {
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(160deg, rgba(45, 226, 230, 0.06), rgba(12, 14, 20, 0.9));
+  background: var(--charcoal-soft);
   padding: 1.5rem;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card-proof:hover {
   transform: translateY(-4px);
-  border-color: var(--border-glow);
+  border-color: rgba(255, 255, 255, 0.16);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 }

@@ -1,6 +1,11 @@
 # Routism showcase (marketing site)
 
-Lusion-inspired product showcase for **Routism** — not the product dashboard (`../ui`).
+Editorial product showcase for **Routism** — not the product dashboard (`../ui`).
+
+Visual system targets a Neue Montreal–inspired editorial language: full-bleed
+signal red / void / cream fields, flat accents, Inter type. CSS variables in
+`app/globals.css` are the color source of truth; Tailwind mirrors semantic
+tokens (`bg-signal`, `text-ink`, `bg-cream`, etc.).
 
 ## Run locally
 
@@ -26,11 +31,33 @@ Product claims (install command, model id, GitHub URL, section anchors) live in
 npm test
 ```
 
+## Design tokens
+
+Defined in `app/globals.css` (`:root`):
+
+| Token | Role |
+|---|---|
+| `--void` / `--charcoal` / `--charcoal-soft` | Black fields & panels |
+| `--signal` / `--signal-hot` | Red hero/footer & hot accents |
+| `--cream` / `--cream-deep` / `--ink` / `--paper` | Paper sections & type |
+| `--fog` / `--fog-dim` | Body / muted on dark |
+| `--accent-lime` / `-green` / `-pink` / `-blue` | Flat graphic accents |
+| `--selection-*` / `--focus-ring*` | Selection & keyboard focus |
+
+**Legacy aliases** (`--filament`, `--pulse`, `--acid`, `--border-glow`, `.glass`,
+`.cta-primary`, `.card-proof`, etc.) remain so the current `page.tsx` stays
+usable during the reskin. Prefer new semantic tokens in new components.
+
+**Type:** Inter only via `next/font/google` (weights 400–900). No commercial
+foundry fonts; no Framer/Pangram font CDNs.
+
+**Grain:** not on `body` by default; optional `.grain-editorial` only.
+
 ## Stack
 
 - Next.js App Router
-- React Three Fiber / Three.js (hero world)
+- Inter (next/font)
 - GSAP ScrollTrigger + Lenis (scroll chapters)
-- Tailwind CSS
+- Tailwind CSS (semantic color mirrors of CSS variables)
 
 Port **3100** avoids clashing with the product UI on **3000**.
