@@ -1,8 +1,10 @@
 import { TYPE_SPLIT_GLYPHS, TYPE_SPLIT_LABELS } from "@/lib/content";
 
 /**
- * Static ENGINE / WORKERS crop on cream — glyph scrub deferred to PR-4b.
- * Decorative only (no nav section id).
+ * ENGINE / WORKERS crop on cream.
+ * Motion (root SmoothScroll): data-motion="glyph-scrub" — pin + scrub
+ * translateX on [data-glyph], desktop-only. Static crop when reduced-motion
+ * or mobile (no pin).
  */
 export default function TypeSplitMorph() {
   return (
@@ -19,7 +21,8 @@ export default function TypeSplitMorph() {
 
         <div className="relative overflow-hidden">
           <p
-            className="select-none font-black leading-[0.85] tracking-[-0.06em] text-ink"
+            data-glyph
+            className="select-none font-black leading-[0.85] tracking-[-0.06em] text-ink will-change-transform"
             style={{ fontSize: "clamp(4.5rem, 18vw, 14rem)" }}
           >
             {TYPE_SPLIT_GLYPHS.engine}
@@ -28,7 +31,8 @@ export default function TypeSplitMorph() {
 
         <div className="relative overflow-hidden text-right">
           <p
-            className="select-none font-black leading-[0.85] tracking-[-0.06em] text-ink/25"
+            data-glyph
+            className="select-none font-black leading-[0.85] tracking-[-0.06em] text-ink/25 will-change-transform"
             style={{ fontSize: "clamp(4.5rem, 18vw, 14rem)" }}
           >
             {TYPE_SPLIT_GLYPHS.workers}

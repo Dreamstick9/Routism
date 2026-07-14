@@ -106,6 +106,35 @@ body {
   mix-blend-mode: overlay;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Marquee (PR-4b) — SmoothScroll toggles .is-marquee-active when advanced on  */
+/* -------------------------------------------------------------------------- */
+.marquee-motion {
+  display: none;
+}
+
+[data-motion="marquee"].is-marquee-active .marquee-static {
+  display: none;
+}
+
+[data-motion="marquee"].is-marquee-active .marquee-motion {
+  display: block;
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+[data-motion="marquee"].is-marquee-active [data-marquee-track] {
+  animation: marquee-x var(--marquee-seconds, 48s) linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -115,6 +144,16 @@ body {
   }
   .motion-safe-only {
     display: none !important;
+  }
+  /* Belt-and-suspenders: never animate marquee under reduced-motion */
+  [data-motion="marquee"].is-marquee-active [data-marquee-track] {
+    animation: none !important;
+  }
+  [data-motion="marquee"].is-marquee-active .marquee-static {
+    display: flex;
+  }
+  [data-motion="marquee"].is-marquee-active .marquee-motion {
+    display: none;
   }
 }
 
