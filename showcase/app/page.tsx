@@ -3,6 +3,7 @@
 import Nav from "@/components/Nav";
 import SkipLink from "@/components/SkipLink";
 import FooterRed from "@/components/FooterRed";
+import SectionLink from "@/components/SectionLink";
 import TerminalDemo from "@/components/TerminalDemo";
 import CopyButton from "@/components/CopyButton";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -95,12 +96,12 @@ export default function HomePage() {
               >
                 Get Routism
               </a>
-              <a
-                href="#demo"
+              <SectionLink
+                id="demo"
                 className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 See install
-              </a>
+              </SectionLink>
             </div>
             <p
               data-reveal

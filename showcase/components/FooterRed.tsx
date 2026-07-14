@@ -3,8 +3,8 @@ import {
   GITHUB_DOCS_OPENAI,
   GITHUB_URL,
   SECTIONS,
-  sectionHref,
 } from "@/lib/product-facts";
+import SectionLink from "@/components/SectionLink";
 
 const FOOTER_DISCLAIMER =
   "Showcase site only — product dashboard runs after you install locally. Not a multi-tenant SaaS; no OAuth or Stripe required.";
@@ -23,12 +23,12 @@ export default function FooterRed() {
           <ul className="mt-4 flex flex-col gap-2 text-sm">
             {SECTIONS.map((s) => (
               <li key={s.id}>
-                <a
-                  href={sectionHref(s.id)}
+                <SectionLink
+                  id={s.id}
                   className="rounded-sm text-white/90 transition-opacity hover:opacity-100 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {s.label}
-                </a>
+                </SectionLink>
               </li>
             ))}
           </ul>

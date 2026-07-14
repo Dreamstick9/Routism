@@ -48,9 +48,7 @@ export default function SmoothScroll({
     setScroller({
       scrollTo: (target, opts) => {
         const el =
-          typeof target === "string"
-            ? target
-            : (target as HTMLElement);
+          typeof target === "string" ? target : (target as HTMLElement);
         lenis.scrollTo(el, {
           offset: opts?.offset ?? -72,
           immediate: opts?.immediate ?? false,
@@ -64,6 +62,12 @@ export default function SmoothScroll({
       },
       refresh: () => {
         ScrollTrigger.refresh();
+      },
+      stop: () => {
+        lenis.stop();
+      },
+      start: () => {
+        lenis.start();
       },
     });
 

@@ -110,6 +110,13 @@ describe("section map / scroll targets", () => {
     ]);
   });
 
+  it("SECTIONS labels are Intro / Story / Architecture / Install / Why / Get it", () => {
+    assert.deepEqual(
+      SECTIONS.map((s) => s.label),
+      ["Intro", "Story", "Architecture", "Install", "Why", "Get it"],
+    );
+  });
+
   it("sectionHref prefixes hash", () => {
     for (const s of SECTIONS) {
       assert.equal(sectionHref(s.id), `#${s.id}`);

@@ -12,14 +12,54 @@ export type Scroller = {
   ) => void;
   onScroll: (cb: (y: number) => void) => () => void;
   refresh: () => void;
+  /** Pause smooth scrolling (e.g. while a modal is open). */
+  stop: () => void;
+  /** Resume smooth scrolling after stop(). */
+  start: () => void;
 };
 
 const DEFAULT_NAV_OFFSET = -72;
 
+type ScrollCb = (y: number) => void;
+
 let scroller: Scroller | null = null;
+
+/** Active spy subscribers that should rebind when scroller is set/cleared. */
+const scrollCbs = new Set<ScrollCb>();
+/** Per-cb teardown for the current binding (Lenis unsub and/or window listener). */
+const cbTeardowns = new Map<ScrollCb, () => void>();
+
+function bindScrollCb(cb: ScrollCb): void {
+  const prev = cbTeardowns.get(cb);
+  if (prev) {
+    prev();
+    cbTeardowns.delete(cb);
+  }
+
+  const s = scroller;
+  if (s) {
+    const unsub = s.onScroll(cb);
+    cbTeardowns.set(cb, unsub);
+    return;
+  }
+
+  if (typeof window === "undefined") return;
+  const handler = () => cb(window.scrollY);
+  window.addEventListener("scroll", handler, { passive: true });
+  cbTeardowns.set(cb, () => window.removeEventListener("scroll", handler));
+}
+
+function rebindAllScrollCbs(): void {
+  for (const cb of scrollCbs) {
+    bindScrollCb(cb);
+  }
+}
 
 export function setScroller(s: Scroller | null): void {
   scroller = s;
+  // Re-bind all subscribers when Lenis appears/disappears (child effects may
+  // have subscribed before the parent SmoothScroll effect ran).
+  rebindAllScrollCbs();
 }
 
 export function getScroller(): Scroller | null {
@@ -35,8 +75,10 @@ export function scrollToSection(id: string, offset = DEFAULT_NAV_OFFSET): void {
   const s = getScroller();
   if (s) {
     s.scrollTo(el, { offset, immediate: false });
-  } else {
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else if (typeof window !== "undefined") {
+    // Match Lenis offset so fixed chrome does not cover headings
+    const top = el.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top, behavior: "smooth" });
   }
 
   if (typeof history !== "undefined") {
@@ -47,20 +89,24 @@ export function scrollToSection(id: string, offset = DEFAULT_NAV_OFFSET): void {
 /**
  * Subscribe to scroll position for nav spy.
  * Uses Lenis when registered; falls back to window scroll.
+ * Rebinds automatically when setScroller is called later.
  * Returns an unsubscribe function.
  */
-export function subscribeScroll(cb: (y: number) => void): () => void {
-  const s = getScroller();
-  if (s) {
-    return s.onScroll(cb);
+export function subscribeScroll(cb: ScrollCb): () => void {
+  scrollCbs.add(cb);
+  bindScrollCb(cb);
+  // Initial reading for consumers that need an immediate value
+  if (typeof window !== "undefined") {
+    cb(window.scrollY);
   }
-  if (typeof window === "undefined") {
-    return () => {};
-  }
-  const handler = () => cb(window.scrollY);
-  handler();
-  window.addEventListener("scroll", handler, { passive: true });
-  return () => window.removeEventListener("scroll", handler);
+  return () => {
+    scrollCbs.delete(cb);
+    const teardown = cbTeardowns.get(cb);
+    if (teardown) {
+      teardown();
+      cbTeardowns.delete(cb);
+    }
+  };
 }
 
 /**
