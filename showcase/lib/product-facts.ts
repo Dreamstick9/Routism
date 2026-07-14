@@ -47,11 +47,11 @@ export const ENGINE_VS_WORKERS =
 export const NO_ACCOUNTS_CLAIM =
   "No accounts, OAuth, or billing — single installation, MIT licensed." as const;
 
-/** Section anchors for nav + scroll (order = page order) */
+/** Section anchors for nav + scroll (order = page order); ids locked for tests */
 export const SECTIONS = [
-  { id: "world", label: "World" },
+  { id: "world", label: "Intro" },
   { id: "hook", label: "Story" },
-  { id: "split", label: "How" },
+  { id: "split", label: "Architecture" },
   { id: "demo", label: "Install" },
   { id: "proof", label: "Why" },
   { id: "download", label: "Get it" },

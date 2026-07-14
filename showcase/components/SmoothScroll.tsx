@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { setScroller, scrollToSection } from "@/lib/scroll-controller";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,11 +19,15 @@ export default function SmoothScroll({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduce) {
-      // Ensure reveal content is fully visible without motion
       document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => {
         el.style.opacity = "1";
         el.style.transform = "none";
       });
+      // Still handle hash without Lenis
+      const hash = window.location.hash.replace("#", "");
+      if (hash) {
+        requestAnimationFrame(() => scrollToSection(hash));
+      }
       return;
     }
 
@@ -31,7 +36,37 @@ export default function SmoothScroll({
       smoothWheel: true,
     });
 
-    lenis.on("scroll", ScrollTrigger.update);
+    const scrollListeners = new Set<(y: number) => void>();
+
+    lenis.on("scroll", (e: { scroll: number }) => {
+      ScrollTrigger.update();
+      for (const cb of scrollListeners) {
+        cb(e.scroll);
+      }
+    });
+
+    setScroller({
+      scrollTo: (target, opts) => {
+        const el =
+          typeof target === "string"
+            ? target
+            : (target as HTMLElement);
+        lenis.scrollTo(el, {
+          offset: opts?.offset ?? -72,
+          immediate: opts?.immediate ?? false,
+        });
+      },
+      onScroll: (cb) => {
+        scrollListeners.add(cb);
+        return () => {
+          scrollListeners.delete(cb);
+        };
+      },
+      refresh: () => {
+        ScrollTrigger.refresh();
+      },
+    });
+
     const ticker = (time: number) => {
       lenis.raf(time * 1000);
     };
@@ -44,12 +79,12 @@ export default function SmoothScroll({
         if (!targets.length) return;
         gsap.fromTo(
           targets,
-          { y: 28, opacity: 0 },
+          { y: 32, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             duration: 0.85,
-            stagger: 0.07,
+            stagger: 0.06,
             ease: "power3.out",
             immediateRender: false,
             scrollTrigger: {
@@ -75,27 +110,40 @@ export default function SmoothScroll({
               duration: 0.9,
               stagger: 0.08,
               ease: "power3.out",
-              delay: 0.15,
+              delay: 0.1,
             },
           );
         }
       }
     });
 
-    // Hash deep-link on load
+    ScrollTrigger.refresh();
+
+    // Hash deep-link after refresh
     const hash = window.location.hash.replace("#", "");
     if (hash) {
       requestAnimationFrame(() => {
-        const el = document.getElementById(hash);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        requestAnimationFrame(() => scrollToSection(hash));
       });
     }
 
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => ScrollTrigger.refresh(), 150);
+    };
+    window.addEventListener("resize", onResize);
+
     return () => {
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener("resize", onResize);
+      clearTimeout(resizeTimer);
       ctx.revert();
       gsap.ticker.remove(ticker);
+      setScroller(null);
       lenis.destroy();
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };

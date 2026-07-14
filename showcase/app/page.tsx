@@ -1,7 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Nav from "@/components/Nav";
+import SkipLink from "@/components/SkipLink";
+import FooterRed from "@/components/FooterRed";
 import TerminalDemo from "@/components/TerminalDemo";
 import CopyButton from "@/components/CopyButton";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -23,83 +24,91 @@ import {
 } from "@/lib/product-facts";
 import { track } from "@/lib/analytics";
 
-const HeroScene = dynamic(() => import("@/components/HeroScene"), {
-  ssr: false,
-  loading: () => (
-    <div
-      className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,#0c1a1c_0%,#05060a_70%)]"
-      aria-hidden
-    />
-  ),
-});
-
 export default function HomePage() {
   return (
     <SmoothScroll>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-[var(--filament)] focus:px-4 focus:py-2 focus:text-black"
-      >
-        Skip to content
-      </a>
+      <SkipLink />
       <Nav />
 
       <main id="main">
-        {/* WORLD */}
+        {/* WORLD — solid red hero, no Three.js */}
         <section
           id="world"
           data-chapter
-          className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-24 pt-28 text-center"
+          className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--signal,#E31C23)] px-6 pb-24 pt-28 text-center"
           aria-label="Hero"
         >
-          <HeroScene />
+          {/* Optional crop word at edge */}
           <div
-            className="pointer-events-none absolute inset-0 -z-[5] bg-[radial-gradient(ellipse_at_center,#0a1618_0%,#05060a_70%)] motion-safe:opacity-40"
+            className="pointer-events-none absolute bottom-0 left-0 right-0 overflow-hidden select-none"
             aria-hidden
-          />
-          <p
-            data-reveal
-            className="mb-4 text-xs uppercase tracking-[0.35em] text-[var(--fog-dim)]"
           >
-            scroll to explore
-          </p>
-          <h1 data-reveal className="display-title max-w-4xl">
-            Conduct{" "}
-            <span className="filament-text">many models</span>
-            <br />
-            as one API
-          </h1>
-          <p
-            data-reveal
-            className="mt-6 max-w-xl text-base leading-relaxed text-[var(--fog)] md:text-lg"
-          >
-            {PRODUCT_ONE_LINER}
-          </p>
-          <div
-            data-reveal
-            className="mt-10 flex flex-wrap items-center justify-center gap-3"
-          >
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cta-primary"
-              data-cta="github-hero"
-              data-github-url={GITHUB_URL}
-              onClick={() => track("cta_github", { where: "hero" })}
+            <p
+              className="translate-y-[35%] whitespace-nowrap text-center font-bold leading-none tracking-[-0.06em] text-white/10"
+              style={{ fontSize: "clamp(6rem, 22vw, 18rem)" }}
             >
-              Get on GitHub
-            </a>
-            <a href="#demo" className="cta-secondary">
-              See install
-            </a>
+              ROUTISM
+            </p>
           </div>
-          <p
-            data-reveal
-            className="mt-8 mono text-[10px] text-[var(--fog-dim)] md:text-xs"
-          >
-            {INSTALL_COMMAND} → routism · model {MODEL_ID}
-          </p>
+
+          <div className="relative z-[1] mx-auto w-full max-w-4xl">
+            <div
+              className="mb-6 h-px w-full bg-[var(--rule-on-signal,rgba(255,255,255,0.18))]"
+              aria-hidden
+            />
+            <p
+              data-reveal
+              className="mb-4 text-xs uppercase tracking-[0.35em] text-white/70"
+            >
+              Self-hosted
+            </p>
+            <h1
+              data-reveal
+              className="display-title max-w-4xl text-[var(--paper,#FFFFFF)]"
+            >
+              Conduct many models
+              <br />
+              as one API
+            </h1>
+            <div
+              className="mt-6 h-px w-full bg-[var(--rule-on-signal,rgba(255,255,255,0.18))]"
+              aria-hidden
+            />
+            <p
+              data-reveal
+              className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-white/85 md:text-lg"
+            >
+              {PRODUCT_ONE_LINER}
+            </p>
+            <div
+              data-reveal
+              className="mt-10 flex flex-wrap items-center justify-center gap-3"
+            >
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-full bg-[var(--charcoal,#1A1A1A)] px-6 py-3 text-sm font-bold text-[var(--paper,#FFFFFF)] transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                data-cta="github-hero"
+                data-github-url={GITHUB_URL}
+                onClick={() => track("cta_github", { where: "hero" })}
+              >
+                Get Routism
+              </a>
+              <a
+                href="#demo"
+                className="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                See install
+              </a>
+            </div>
+            <p
+              data-reveal
+              className="mt-8 mono text-[10px] text-white/60 md:text-xs"
+            >
+              {INSTALL_COMMAND} → routism · model {MODEL_ID}
+            </p>
+          </div>
         </section>
 
         {/* HOOK / STORY */}
@@ -380,27 +389,9 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 px-6 py-10 text-center text-xs text-[var(--fog-dim)]">
-        <p>
-          Routism · MIT ·{" "}
-          <a
-            href={GITHUB_URL}
-            className="text-[var(--filament)] hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-github-url={GITHUB_URL}
-          >
-            GitHub
-          </a>
-        </p>
-        <p className="mx-auto mt-2 max-w-md">
-          Showcase site only — product dashboard runs after you install
-          locally. Not a multi-tenant SaaS; no OAuth or Stripe required.
-        </p>
-        <p className="mt-4 mono text-[10px] opacity-60">
-          {AGENT_ENV_SNIPPET.split("\n")[0]}
-        </p>
-      </footer>
+      <FooterRed />
+      {/* keep agent env fact available for scrapers / tests consumers */}
+      <span className="sr-only">{AGENT_ENV_SNIPPET}</span>
     </SmoothScroll>
   );
 }
