@@ -20,10 +20,10 @@ export default function ArchitecturePlate() {
       className="relative overflow-hidden border-t border-white/5 bg-charcoal"
       aria-labelledby="split-title"
     >
-      {/* Solid abstract plate — parallax bg deferred to PR-4a */}
+      {/* Oversized plate for scrub parallax (SmoothScroll wires data-motion="parallax") */}
       <div
         data-motion="parallax"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-soft to-void"
+        className="pointer-events-none absolute -inset-[12%] scale-110 bg-gradient-to-br from-charcoal via-charcoal-soft to-void will-change-transform"
         aria-hidden
       />
       <div
