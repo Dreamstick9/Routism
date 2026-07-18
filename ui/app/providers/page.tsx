@@ -14,6 +14,7 @@ import {
   isReservedWorker,
   filterReservedWorkers,
   fetchProviderModels,
+  normalizeOpenAIBaseUrl,
   type Worker,
   type PoolResponse,
   type HealthSummary,
@@ -415,7 +416,9 @@ export default function ProvidersPage() {
     try {
       await addWorker({
         id, provider: selectedProvider?.name || "custom",
-        base_url: baseUrl, model, tags,
+        // Always store OpenAI root (…/v1), never …/chat/completions
+        base_url: normalizeOpenAIBaseUrl(baseUrl) || baseUrl,
+        model, tags,
         api_key: key || "",
       });
       // Reset form

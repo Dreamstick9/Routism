@@ -424,6 +424,21 @@ export async function addOllamaModel(
   return addLocalModel("ollama", model, baseUrl ?? "http://localhost:11434/v1");
 }
 
+/** Normalize any provider base to an OpenAI-compatible API root (no chat path). */
+export function normalizeOpenAIBaseUrl(input: string | null | undefined): string {
+  let raw = (input || "").trim();
+  if (!raw) return "";
+  raw = raw.replace(/\/+$/, "");
+  // Repair catalog/copy-paste mistakes that store the chat URL as base
+  if (raw.includes("/chat/completions")) {
+    raw = raw.split("/chat/completions")[0].replace(/\/+$/, "");
+  }
+  if (raw.endsWith("/models")) {
+    raw = raw.slice(0, -"/models".length).replace(/\/+$/, "");
+  }
+  return raw;
+}
+
 /** Normalize user host input to an OpenAI-compatible …/v1 base URL. */
 export function normalizeLocalOpenAIBase(input: string | null | undefined, fallback: string): string {
   let raw = (input || "").trim();
@@ -431,7 +446,7 @@ export function normalizeLocalOpenAIBase(input: string | null | undefined, fallb
   if (raw.startsWith(":") && /^\d+$/.test(raw.slice(1))) raw = `http://localhost${raw}`;
   else if (/^\d+$/.test(raw)) raw = `http://localhost:${raw}`;
   else if (!raw.includes("://")) raw = `http://${raw}`;
-  raw = raw.replace(/\/+$/, "");
+  raw = normalizeOpenAIBaseUrl(raw);
   if (!raw.endsWith("/v1")) raw = `${raw}/v1`;
   return raw;
 }

@@ -30,6 +30,7 @@ import httpx
 
 from .config import Worker
 from .crypto_keys import resolve_api_key
+from .health_probe import normalize_openai_base_url
 from .host_reach import rewrite_loopback_url_for_container
 
 
@@ -153,13 +154,22 @@ def chat_completions_url(base_url: str) -> str:
     When the API runs in Docker, loopback hosts are rewritten to
     ``host.docker.internal`` so workers on the host machine are reachable.
     """
-    url = rewrite_loopback_url_for_container((base_url or "").rstrip("/"))
+    url = rewrite_loopback_url_for_container(
+        normalize_openai_base_url(base_url or "")
+    )
+    if not url:
+        return "/v1/chat/completions"
     if url.endswith("/chat/completions"):
         return url
     if url.endswith("/v1"):
         return url + "/chat/completions"
-    # Some gateways use a non-v1 prefix (e.g. /api/gateway); append the path.
-    return url + "/chat/completions"
+    # Gateway roots without /v1 (e.g. …/api/gateway) still use /chat/completions
+    from urllib.parse import urlparse
+
+    path = (urlparse(url).path or "").strip("/")
+    if path:
+        return url.rstrip("/") + "/chat/completions"
+    return url.rstrip("/") + "/v1/chat/completions"
 
 
 def _complete_full_http(

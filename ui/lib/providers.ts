@@ -512,7 +512,8 @@ export const PROVIDERS: ProviderInfo[] = [
   {
     id: "opencode",
     name: "OpenCode",
-    baseUrl: "https://opencode.ai/zen/v1/chat/completions",
+    // OpenAI-compatible root only (never …/chat/completions — that breaks health probes)
+    baseUrl: "https://opencode.ai/zen/v1",
     modelsUrl: "https://opencode.ai/zen/v1/models",
     docsUrl: "https://opencode.ai",
     requiresKey: true,

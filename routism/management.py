@@ -201,11 +201,17 @@ def post_pool(worker_in: WorkerIn) -> dict:
         except SSRFBlocked as e:
             raise HTTPException(status_code=400, detail=f"invalid base_url: {e}") from e
 
+        from routism.health_probe import normalize_openai_base_url
         from routism.host_reach import rewrite_loopback_url_for_container
 
-        # Docker: persist host-reachable URL so health/chat work without per-call
-        # surprises for operators reading routism.yaml.
-        rewritten_base = rewrite_loopback_url_for_container(worker_in.base_url)
+        # Strip mistaken /chat/completions bases, then Docker host rewrite.
+        rewritten_base = rewrite_loopback_url_for_container(
+            normalize_openai_base_url(worker_in.base_url)
+        )
+        try:
+            validate_worker_base_url(rewritten_base)
+        except SSRFBlocked as e:
+            raise HTTPException(status_code=400, detail=f"invalid base_url: {e}") from e
 
         path = _manager_path()
         try:

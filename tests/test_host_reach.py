@@ -105,6 +105,24 @@ def test_client_loopback_helpers() -> None:
     assert client_is_private_host("10.0.0.5")
 
 
+def test_normalize_strips_chat_completions_base() -> None:
+    from routism.health_probe import models_probe_url, normalize_openai_base_url
+    from routism.worker import chat_completions_url
+
+    bad = "https://opencode.ai/zen/v1/chat/completions"
+    assert normalize_openai_base_url(bad) == "https://opencode.ai/zen/v1"
+    assert models_probe_url(bad) == "https://opencode.ai/zen/v1/models"
+    assert chat_completions_url(bad) == "https://opencode.ai/zen/v1/chat/completions"
+    # Already correct
+    good = "https://api.openai.com/v1"
+    assert models_probe_url(good) == "https://api.openai.com/v1/models"
+    assert chat_completions_url(good) == "https://api.openai.com/v1/chat/completions"
+    # Gateway without /v1
+    gw = "https://api.kilo.ai/api/gateway"
+    assert models_probe_url(gw) == "https://api.kilo.ai/api/gateway/models"
+    assert chat_completions_url(gw) == "https://api.kilo.ai/api/gateway/chat/completions"
+
+
 if __name__ == "__main__":
     # Minimal runner without pytest
     fails = 0
