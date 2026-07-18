@@ -146,6 +146,22 @@ def rewrite_loopback_url_for_container(
     return rebuilt
 
 
+def _coerce_ip(client_host: str | None):
+    """Parse client host; unwrap IPv4-mapped IPv6 (``::ffff:127.0.0.1``)."""
+    if not client_host:
+        return None
+    h = client_host.strip().lower().strip("[]")
+    try:
+        ip = ipaddress.ip_address(h)
+    except ValueError:
+        return None
+    # Docker / some stacks present loopback as IPv4-mapped IPv6
+    mapped = getattr(ip, "ipv4_mapped", None)
+    if mapped is not None:
+        return mapped
+    return ip
+
+
 def client_is_loopback_host(client_host: str | None) -> bool:
     """True if the HTTP client address is loopback."""
     if not client_host:
@@ -153,20 +169,16 @@ def client_is_loopback_host(client_host: str | None) -> bool:
     h = client_host.strip().lower().strip("[]")
     if h in ("127.0.0.1", "::1", "localhost", "localhost.localdomain"):
         return True
-    try:
-        return ipaddress.ip_address(h).is_loopback
-    except ValueError:
+    ip = _coerce_ip(client_host)
+    if ip is None:
         return False
+    return bool(ip.is_loopback)
 
 
 def client_is_private_host(client_host: str | None) -> bool:
     """True if client is RFC1918 / ULA private (typical Docker bridge source)."""
-    if not client_host:
-        return False
-    h = client_host.strip().lower().strip("[]")
-    try:
-        ip = ipaddress.ip_address(h)
-    except ValueError:
+    ip = _coerce_ip(client_host)
+    if ip is None:
         return False
     if ip.is_loopback:
         return False

@@ -101,6 +101,12 @@ def test_ssrf_still_blocks_private_non_gateway() -> None:
 
 def test_client_loopback_helpers() -> None:
     assert client_is_loopback_host("127.0.0.1")
+    assert client_is_loopback_host("::1")
+    # IPv4-mapped loopback (seen via Docker published ports)
+    assert client_is_loopback_host("::ffff:127.0.0.1")
+    assert management_client_allowed(
+        "::ffff:127.0.0.1", management_key=None, open_local=True
+    )
     assert not client_is_loopback_host("172.17.0.2")
     assert client_is_private_host("10.0.0.5")
 
