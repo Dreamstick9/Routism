@@ -30,6 +30,7 @@ import httpx
 
 from .config import Worker
 from .crypto_keys import resolve_api_key
+from .host_reach import rewrite_loopback_url_for_container
 
 
 class WorkerError(Exception):
@@ -148,8 +149,11 @@ def chat_completions_url(base_url: str) -> str:
       - bare ``https://host`` (appends ``/v1/chat/completions``)
     so a misconfigured pool entry that already includes the path does not
     become ``.../chat/completions/chat/completions`` (HTTP 404).
+
+    When the API runs in Docker, loopback hosts are rewritten to
+    ``host.docker.internal`` so workers on the host machine are reachable.
     """
-    url = (base_url or "").rstrip("/")
+    url = rewrite_loopback_url_for_container((base_url or "").rstrip("/"))
     if url.endswith("/chat/completions"):
         return url
     if url.endswith("/v1"):

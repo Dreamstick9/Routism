@@ -13,6 +13,10 @@ from urllib.parse import urlparse
 import httpx
 
 from .health_probe import is_healthy_status
+from .host_reach import (
+    connection_refused_hint,
+    rewrite_loopback_url_for_container,
+)
 
 
 @dataclass(frozen=True)
@@ -91,11 +95,17 @@ def normalize_local_base(user_base: str | None, *, default: str) -> str:
 
 
 def resolve_native_base(spec: LocalProviderSpec, user_base: str | None = None) -> str:
-    """Native server root (no forced /v1) from user override, env, or default."""
+    """Native server root (no forced /v1) from user override, env, or default.
+
+    When the API runs in Docker, loopback hosts are rewritten to
+    ``host.docker.internal`` so host Ollama / LM Studio / MLX are reachable.
+    """
     if user_base and str(user_base).strip():
-        return normalize_local_base(user_base, default=spec.default_native_base)
-    env_val = (os.environ.get(spec.env_host) or "").strip()
-    return normalize_local_base(env_val or None, default=spec.default_native_base)
+        base = normalize_local_base(user_base, default=spec.default_native_base)
+    else:
+        env_val = (os.environ.get(spec.env_host) or "").strip()
+        base = normalize_local_base(env_val or None, default=spec.default_native_base)
+    return rewrite_loopback_url_for_container(base)
 
 
 def resolve_openai_base(spec: LocalProviderSpec, user_base: str | None = None) -> str:
@@ -237,14 +247,14 @@ def discover_local_models(
             "models": models,
         }
     except Exception as e:  # noqa: BLE001
+        hint = connection_refused_hint(native)
         return {
             "running": False,
             "provider": spec.id,
             "base_url": openai_base,
             "openai_base_url": openai_base,
             "error": (
-                f"{spec.display_name} not reachable at {native} — is it running? "
-                f"Edit the host/port if your server uses a different one. "
+                f"{spec.display_name} not reachable at {native}. {hint} "
                 f"({type(e).__name__}: {e})"
             ),
         }

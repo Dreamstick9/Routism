@@ -18,6 +18,8 @@ services:
       ROUTISM_OPEN_LOCAL: "1"
       ROUTISM_ALLOW_ANON_LOOPBACK: "1"
       ROUTISM_REQUIRE_API_KEY: "0"
+      # Signal container runtime so localhost worker URLs rewrite to host gateway
+      ROUTISM_IN_DOCKER: "1"
       ROUTISM_PUBLIC_BASE_URL: "http://localhost:8000/v1"
       # Engine models (eng-thinker / eng-verifier / eng-judge2) run on host Ollama
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}

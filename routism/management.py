@@ -201,6 +201,12 @@ def post_pool(worker_in: WorkerIn) -> dict:
         except SSRFBlocked as e:
             raise HTTPException(status_code=400, detail=f"invalid base_url: {e}") from e
 
+        from routism.host_reach import rewrite_loopback_url_for_container
+
+        # Docker: persist host-reachable URL so health/chat work without per-call
+        # surprises for operators reading routism.yaml.
+        rewritten_base = rewrite_loopback_url_for_container(worker_in.base_url)
+
         path = _manager_path()
         try:
             settings = cfg.load(path)
@@ -209,6 +215,7 @@ def post_pool(worker_in: WorkerIn) -> dict:
 
         workers = [_to_worker_dict(w) for w in settings.workers]
         new_w = worker_in.model_dump(exclude={"set_as_orchestrator", "set_as_verifier"})
+        new_w["base_url"] = rewritten_base
         existing_idx = next((i for i, w in enumerate(workers) if w["id"] == worker_in.id), None)
         # Preserve existing key when the client omits/blank-sends api_key (re-add /
         # reconnect without re-pasting). Critical for oMLX and other keyed locals.
@@ -417,9 +424,11 @@ def fetch_models(body: FetchModelsIn) -> dict:
     except SSRFBlocked as e:
         return {"models": [], "error": f"invalid url: {e}"}
 
-    base = body.base_url.rstrip("/")
+    from routism.host_reach import rewrite_loopback_url_for_container
+
+    base = rewrite_loopback_url_for_container(body.base_url.rstrip("/"))
     if body.models_url:
-        url = body.models_url.rstrip("/")
+        url = rewrite_loopback_url_for_container(body.models_url.rstrip("/"))
     else:
         url = models_probe_url(base)
     headers = {"content-type": "application/json"}
@@ -550,7 +559,14 @@ def health(worker_id: str) -> dict:
     if target is None:
         raise HTTPException(status_code=404, detail=f"worker_id {worker_id!r} not in pool")
 
-    url = models_probe_url(target.base_url)
+    from routism.host_reach import (
+        connection_refused_hint,
+        rewrite_loopback_url_for_container,
+    )
+
+    # API-in-Docker: rewrite stored localhost worker URLs to host gateway.
+    probe_base = rewrite_loopback_url_for_container(target.base_url)
+    url = models_probe_url(probe_base)
     headers = {}
     key = resolve_api_key(target.api_key)
     if key:
@@ -566,10 +582,11 @@ def health(worker_id: str) -> dict:
             url=url,
         )
     except Exception as e:
+        hint = connection_refused_hint(probe_base)
         return classify_models_probe(
             worker_id=worker_id,
             status_code=None,
             api_key_configured=bool(key),
             url=url,
-            transport_error=f"{type(e).__name__}: {e}",
+            transport_error=f"{type(e).__name__}: {e}. {hint}",
         )

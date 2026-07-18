@@ -188,29 +188,58 @@ app.include_router(benchmarks_router)
 #     any off-box request until a key is configured.
 # ---------------------------------------------------------------------------
 def _client_is_loopback(request: Request) -> bool:
+    """True if the HTTP client is loopback (delegates to host_reach helper)."""
+    from routism.host_reach import client_is_loopback_host
+
     host = (request.client.host if request.client else "") or ""
-    return host in ("127.0.0.1", "::1", "localhost")
+    return client_is_loopback_host(host)
 
 
 def require_management_auth(request: Request) -> None:
-    key = os.environ.get("MANAGEMENT_API_KEY")
-    if key:
-        auth = request.headers.get("authorization", "")
-        if auth != f"Bearer {key}":
-            raise HTTPException(status_code=401, detail="invalid or missing management API key")
-        return
-    # No key configured -> localhost only.
-    if not _client_is_loopback(request):
-        import logging
-        logging.warning(
-            "MANAGEMENT_API_KEY unset and a non-loopback management request was "
-            "refused from %s. Set MANAGEMENT_API_KEY to allow remote dashboard use.",
-            request.client.host if request.client else "unknown",
-        )
+    """Gate management POST/DELETE/PUT.
+
+    - MANAGEMENT_API_KEY set → require Bearer.
+    - Unset + loopback client → allow (native API on laptop).
+    - Unset + private client (Docker bridge) + ROUTISM_OPEN_LOCAL=1 → allow
+      so stock ``docker compose`` + browser on published :8000 works without a
+      manual management key.
+    - Unset + public client → 401 (set MANAGEMENT_API_KEY for remote dashboard).
+    """
+    from routism.host_reach import management_client_allowed
+
+    key = (os.environ.get("MANAGEMENT_API_KEY") or "").strip()
+    auth = request.headers.get("authorization", "")
+    bearer_ok = bool(key) and auth == f"Bearer {key}"
+    client_host = (request.client.host if request.client else "") or ""
+
+    if key and not bearer_ok:
         raise HTTPException(
             status_code=401,
-            detail="management API is locked to loopback while MANAGEMENT_API_KEY is unset",
+            detail="invalid or missing management API key",
         )
+
+    if management_client_allowed(
+        client_host,
+        management_key=key or None,
+        bearer_ok=bearer_ok if key else False,
+    ):
+        return
+
+    import logging
+
+    logging.warning(
+        "Management request refused from %s (no MANAGEMENT_API_KEY / not local). "
+        "For remote dashboards set MANAGEMENT_API_KEY; for local Docker ensure "
+        "ROUTISM_OPEN_LOCAL=1 (default).",
+        client_host or "unknown",
+    )
+    raise HTTPException(
+        status_code=401,
+        detail=(
+            "management API is locked: set MANAGEMENT_API_KEY for remote access, "
+            "or use the local dashboard (loopback / Docker Desktop on this machine)"
+        ),
+    )
 
 
 # Apply the auth dependency to management MUTATION routes only (POST/DELETE +
@@ -298,10 +327,12 @@ def health_all() -> dict:
         return {"workers": [], "generated_at": int(time.time())}
     from .crypto_keys import resolve_api_key
     from .health_probe import classify_models_probe, models_probe_url
+    from .host_reach import connection_refused_hint, rewrite_loopback_url_for_container
 
     out = []
     for w in settings.workers:
-        url = models_probe_url(w.base_url)
+        probe_base = rewrite_loopback_url_for_container(w.base_url)
+        url = models_probe_url(probe_base)
         headers = {}
         key = resolve_api_key(w.api_key)
         if key:
@@ -318,13 +349,14 @@ def health_all() -> dict:
                 )
             )
         except Exception as e:
+            hint = connection_refused_hint(probe_base)
             out.append(
                 classify_models_probe(
                     worker_id=w.id,
                     status_code=None,
                     api_key_configured=bool(key),
                     url=url,
-                    transport_error=f"{type(e).__name__}: {e}",
+                    transport_error=f"{type(e).__name__}: {e}. {hint}",
                 )
             )
     return {"workers": out, "generated_at": int(time.time())}

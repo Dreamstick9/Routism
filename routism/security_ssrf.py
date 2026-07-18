@@ -56,6 +56,12 @@ def _is_localhost_name(host: str) -> bool:
     return h in ("localhost", "localhost.localdomain")
 
 
+def _is_docker_host_gateway_name(host: str) -> bool:
+    """Docker Desktop / compose host gateway — treat like loopback for local LLMs."""
+    h = host.lower().rstrip(".").strip("[]")
+    return h in ("host.docker.internal", "gateway.docker.internal")
+
+
 def _parse_ip(host: str) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     h = host.strip("[]")
     try:
@@ -159,18 +165,19 @@ def validate_worker_base_url(url: str) -> str:
 
     allow_private = allow_private_urls()
     is_local_name = _is_localhost_name(host)
+    is_docker_gw = _is_docker_host_gateway_name(host)
     literal_ip = _parse_ip(host)
 
     # Loopback is always permitted (local LLM servers on the laptop).
     allow_loopback = True
 
-    # Scheme rules: http only for localhost/loopback (never for remote/LAN hosts
-    # unless they are loopback). Private non-loopback still uses https + flag.
+    # Scheme rules: http only for localhost/loopback / Docker host gateway
+    # (API-in-Docker → host Ollama). Private non-loopback still uses https + flag.
     if scheme == "http":
         if literal_ip is not None:
             if not literal_ip.is_loopback:
                 raise SSRFBlocked("http is only allowed for loopback addresses (localhost)")
-        elif not is_local_name:
+        elif not is_local_name and not is_docker_gw:
             raise SSRFBlocked("http is only allowed for localhost / loopback")
 
     if literal_ip is not None:
@@ -179,8 +186,8 @@ def validate_worker_base_url(url: str) -> str:
         )
         if reason:
             raise SSRFBlocked(f"base_url blocked: {reason}")
-    elif is_local_name:
-        # localhost hostname always OK (loopback policy)
+    elif is_local_name or is_docker_gw:
+        # localhost or host.docker.internal always OK for local LLM access
         pass
     else:
         # Remote hostname: resolve and check each A/AAAA record.

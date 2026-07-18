@@ -130,19 +130,22 @@ export default function ProvidersPage() {
   > = {
     ollama: {
       title: "Ollama",
-      blurb: "Discover models on this machine and add one to your pool.",
+      blurb:
+        "Discover models on this machine and add one to your pool. Start Ollama first. (Docker API rewrites localhost → host automatically.)",
       defaultHost: "http://localhost:11434",
       button: "Connect Ollama",
     },
     lmstudio: {
       title: "LM Studio",
-      blurb: "OpenAI-compatible local server. Start the server in LM Studio first.",
+      blurb:
+        "OpenAI-compatible local server. Start the server in LM Studio first, then connect.",
       defaultHost: "http://localhost:1234",
       button: "Connect LM Studio",
     },
     mlx: {
       title: "MLX / oMLX",
-      blurb: "Local MLX OpenAI-compatible server (port varies — set yours below).",
+      blurb:
+        "Local MLX OpenAI-compatible server (port varies — set yours below). Server must be running.",
       defaultHost: "http://localhost:6969",
       button: "Connect MLX",
     },

@@ -193,9 +193,16 @@ From repo without install: `./bin/routism`.
 
 After setup:
 
-1. Dashboard **Providers** → register workers.  
-2. **API keys** → create `rtm_…` (copy once).  
-3. Point the agent:
+1. **Start Ollama on the host** (and pull models if you use local workers).  
+2. Dashboard **Providers** → **Connect Ollama** (leave default `http://localhost:11434`).  
+   When the API runs in Docker it **automatically** reaches the host via
+   `host.docker.internal` — you do **not** need to type that by hand.  
+3. **API keys** → create `rtm_…` (copy once).  
+4. Point the agent:
+
+Cloud providers (Groq, OpenAI, …): paste a **valid** API key, then Refresh models.
+Local dashboard mutations work on stock Docker without setting `MANAGEMENT_API_KEY`.
+Only set `MANAGEMENT_API_KEY` if you manage the API from a **remote** machine.
 
 ```bash
 export OPENAI_BASE_URL="http://localhost:8000/v1"
@@ -300,9 +307,11 @@ See [`.env.example`](.env.example).
 | `ROUTISM_OPEN_LOCAL` | `1` | Key CRUD open on loopback |
 | `ROUTISM_ALLOW_ANON_LOOPBACK` | `1` | Chat without key from loopback |
 | `ROUTISM_FERNET_KEY` / `ROUTISM_SECRETS_KEY` | auto | Encrypt worker secrets |
-| `MANAGEMENT_API_KEY` | unset | Remote management; else loopback |
+| `MANAGEMENT_API_KEY` | unset | Required only for **remote** dashboard mutations; local Docker + browser work without it when `ROUTISM_OPEN_LOCAL=1` |
+| `ROUTISM_IN_DOCKER` | unset / `1` in compose | Enables automatic rewrite of `localhost` worker URLs to `host.docker.internal` |
+| `ROUTISM_OPEN_LOCAL` | `1` | Allow local dashboard management without a management key |
 | `NEXT_PUBLIC_ROUTISM_API` | `http://localhost:8000` | Browser → API |
-| `OLLAMA_BASE_URL` | `http://host.docker.internal:11434` | API → host Ollama |
+| `OLLAMA_BASE_URL` | `http://host.docker.internal:11434` | API → host Ollama (orchestration models) |
 
 **Do not** expose `:8000` to the internet without API keys enforced.
 
@@ -372,11 +381,14 @@ python3 tests/test_public_safety.py
 | Symptom | Check |
 |---------|--------|
 | Weak / empty answers | Workers registered and healthy? Pool non-empty? |
-| 401 | Missing/revoked key or strict require-key mode |
+| 401 on chat | Missing/revoked `rtm_` key or `ROUTISM_REQUIRE_API_KEY=1` without Bearer |
+| 401 on Providers / fetch models | Remote client without `MANAGEMENT_API_KEY`; local Docker should work with defaults |
+| Local Connect “connection refused” | Start Ollama/LM Studio/MLX **on the host**; API in Docker auto-maps localhost → host |
 | Long hangs | Raise agent timeout; inspect `routism logs` / trajectories |
 | UI blank / wrong API | `NEXT_PUBLIC_ROUTISM_API` from browser network |
 | Conductor fails plan | Ollama up? `routism doctor` / `routism pull-engine` |
-| Provider add fails | Fernet key; SSRF (HTTPS or loopback only) |
+| Provider add fails | Fernet key; SSRF (public HTTPS or localhost / host.docker.internal) |
+| Cloud model list empty | Invalid third-party API key (401 from provider) — fix the key, not Docker |
 
 ---
 
