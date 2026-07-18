@@ -185,22 +185,42 @@ def client_is_private_host(client_host: str | None) -> bool:
     return bool(ip.is_private)
 
 
+def host_header_is_local(host_header: str | None) -> bool:
+    """True if HTTP Host targets the local machine (browser → localhost:8000).
+
+    Docker Desktop + VPN/WARP often presents a non-loopback client IP even when
+    the user opens http://localhost:8000. Trusting a local Host header (only
+    when open_local is on) restores the stock local-dashboard UX. For public
+    exposure, set MANAGEMENT_API_KEY (and ROUTISM_REQUIRE_API_KEY).
+    """
+    if not host_header:
+        return False
+    h = host_header.split("/", 1)[0].split(":", 1)[0].strip().lower().strip("[]")
+    if h in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
+        return True
+    if h.endswith(".localhost"):
+        return True
+    return False
+
+
 def management_client_allowed(
     client_host: str | None,
     *,
     management_key: str | None,
     bearer_ok: bool = False,
     open_local: bool | None = None,
+    host_header: str | None = None,
 ) -> bool:
     """Whether a management mutation is allowed for this client.
 
-    Rules (mirrors product intent for stock Docker Desktop):
-    - If ``management_key`` is non-empty: require ``bearer_ok`` (caller validated Bearer).
-    - If no key: allow loopback always.
-    - If no key and open_local (default on): also allow private RFC1918 clients
-      so Docker published-port traffic (source often 172.x) works for the local
-      dashboard without a manual MANAGEMENT_API_KEY.
-    - Public/global client IPs without a key are denied.
+    Rules (stock Docker Desktop / local dashboard):
+    - If ``management_key`` is non-empty: require ``bearer_ok``.
+    - If no key: allow loopback client always.
+    - If no key and open_local (default on):
+        - private RFC1918 clients (Docker bridge), OR
+        - requests whose Host header is localhost / 127.0.0.1
+          (covers VPN/WARP source IPs when the user still targets localhost).
+    - Public Host + public client without a key → denied.
     """
     key = (management_key or "").strip()
     if key:
@@ -208,7 +228,11 @@ def management_client_allowed(
     if client_is_loopback_host(client_host):
         return True
     ol = open_local_enabled() if open_local is None else bool(open_local)
-    if ol and client_is_private_host(client_host):
+    if not ol:
+        return False
+    if client_is_private_host(client_host):
+        return True
+    if host_header_is_local(host_header):
         return True
     return False
 

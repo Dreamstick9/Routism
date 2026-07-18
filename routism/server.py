@@ -211,6 +211,7 @@ def require_management_auth(request: Request) -> None:
     auth = request.headers.get("authorization", "")
     bearer_ok = bool(key) and auth == f"Bearer {key}"
     client_host = (request.client.host if request.client else "") or ""
+    host_header = request.headers.get("host") or ""
 
     if key and not bearer_ok:
         raise HTTPException(
@@ -222,22 +223,23 @@ def require_management_auth(request: Request) -> None:
         client_host,
         management_key=key or None,
         bearer_ok=bearer_ok if key else False,
+        host_header=host_header,
     ):
         return
 
     import logging
 
     logging.warning(
-        "Management request refused from %s (no MANAGEMENT_API_KEY / not local). "
-        "For remote dashboards set MANAGEMENT_API_KEY; for local Docker ensure "
-        "ROUTISM_OPEN_LOCAL=1 (default).",
+        "Management request refused from %s Host=%r (no MANAGEMENT_API_KEY / not local). "
+        "Open http://localhost:8000 from this machine, or set MANAGEMENT_API_KEY.",
         client_host or "unknown",
+        host_header,
     )
     raise HTTPException(
         status_code=401,
         detail=(
-            "management API is locked: set MANAGEMENT_API_KEY for remote access, "
-            "or use the local dashboard (loopback / Docker Desktop on this machine)"
+            "management API is locked: open the dashboard via http://localhost:3000 "
+            "(API on localhost:8000), or set MANAGEMENT_API_KEY for remote access"
         ),
     )
 

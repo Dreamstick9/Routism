@@ -74,6 +74,23 @@ def test_management_denies_public_without_key() -> None:
     )
 
 
+def test_management_allows_localhost_host_header_with_weird_client_ip() -> None:
+    # Docker Desktop + Cloudflare WARP often shows a public-looking client IP
+    # while the browser still targets Host: localhost:8000
+    assert management_client_allowed(
+        "172.65.90.23",
+        management_key=None,
+        open_local=True,
+        host_header="localhost:8000",
+    )
+    assert not management_client_allowed(
+        "172.65.90.23",
+        management_key=None,
+        open_local=True,
+        host_header="evil.example.com",
+    )
+
+
 def test_management_key_requires_bearer() -> None:
     assert not management_client_allowed(
         "8.8.8.8", management_key="secret", bearer_ok=False, open_local=True
